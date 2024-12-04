@@ -1,16 +1,124 @@
 from flask import Flask, jsonify, request
 from utility import Database
 from flask_cors import CORS
+from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
+import requests
 
 app = Flask(__name__)
 CORS(app)
 db = Database()  
 
+# RapidAPI Judge0 Credentials
+RAPIDAPI_HOST = "judge0-ce.p.rapidapi.com"
+RAPIDAPI_KEY = "b66cb0edd6msh7b3858557c7a863p1a33d5jsn2ed6283ff643"
+
+# Endpoint to execute code on test cases
+@app.route('/submitCode/<int:problem_id>', methods=['POST'])
+def submit_code(problem_id):
+    try:
+        # Get code and language from frontend
+        data = request.json
+        code = data.get('code')
+        language = data.get('language')
+
+        # Map language names to Judge0 language IDs
+        language_map = {
+            "Python": 71,
+            "JavaScript": 63,
+            "Java": 62,
+            "C++": 54,
+            "C#": 51
+        }
+        language_id = language_map.get(language)
+        if not language_id:
+            return jsonify({"error": f"Unsupported language: {language}"}), 400
+
+        test_cases = []
+
+        if not test_cases:
+            return jsonify({"error": "No test cases found for this problem"}), 404
+
+        # Run code for each test case
+        results = []
+        for test_case in test_cases:
+            input_data = test_case['input_data']
+            expected_output = test_case['expected_output']
+
+            # Prepare payload for Judge0
+            payload = {
+                "source_code": code,
+                "language_id": language_id,
+                "stdin": input_data
+            }
+
+            # Submit code to Judge0
+            headers = {
+                'x-rapidapi-key': RAPIDAPI_KEY,
+                'x-rapidapi-host': RAPIDAPI_HOST,
+                'content-type': 'application/json'
+            }
+            response = requests.post(f"https://{RAPIDAPI_HOST}/submissions?base64_encoded=false", 
+                                     json=payload, headers=headers)
+            submission_response = response.json()
+
+            if "token" not in submission_response:
+                results.append({"input": input_data, "error": "Failed to create submission"})
+                continue
+
+            # Fetch result using token
+            token = submission_response["token"]
+            result_response = requests.get(f"https://{RAPIDAPI_HOST}/submissions/{token}?base64_encoded=false", 
+                                        headers=headers)
+            result_data = result_response.json()
+
+            # Append results
+            results.append({
+                "input": input_data,
+                "expected_output": expected_output,
+                "actual_output": result_data.get("stdout", "").strip(),
+                "status": result_data.get("status", {}).get("description"),
+                "execution_time": result_data.get("time"),
+                "memory": result_data.get("memory"),
+            })
+
+        return jsonify({"test_case_results": results})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route("/")
 def home():
     return "Home Page"
 
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.json
+    name = data['name']
+    email = data['email']
+    password = generate_password_hash(data['password'], method='sha256')
 
+    result = db.create_user(name, email, password)
+    if result["status"] == "success":
+        return jsonify({"message": "User registered successfully!"}), 201
+    else:
+        return jsonify({"error": result["message"]}), 400
+
+
+# Login endpoint
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    email = data['email']
+    password = data['password']
+
+    user = db.get_user_by_email(email)  # Add a new method in your Database class
+    if not user:
+        return jsonify({"error": "User not found!"}), 404
+
+    if check_password_hash(user[3], password):  # Assuming `password` is in the 4th column
+        return jsonify({"message": "Login successful!", "user_id": user[0]}), 200
+    else:
+        return jsonify({"error": "Incorrect password!"}), 401
 # Get Users
 @app.route('/users', methods=['GET'])
 def get_users():
@@ -82,7 +190,8 @@ def get_problem(problem_id):
         "id": problem[0],
         "title": problem[1],
         "difficulty": problem[2],
-        "description": problem[3]
+        "description": problem[3],
+        "example_input_output": problem[4]
     })
 
 # Update a problem
@@ -100,22 +209,54 @@ def delete_problem(problem_id):
     result = db.delete_problem(problem_id)
     return jsonify(result)
 
-# Add a Contest
+# Add Contest
 @app.route('/contests', methods=['POST'])
 def add_contest():
     data = request.json
+
+    # Validation: Start time must be before End time, and Start time must be in the future.
+    created_at = datetime.now()
+    start_time = datetime.fromisoformat(data["start_time"])
+    end_time = datetime.fromisoformat(data["end_time"])
+    
+    if start_time <= created_at:
+        return jsonify({"error": "Start time must be in the future."}), 400
+    if start_time >= end_time:
+        return jsonify({"error": "Start time must be before End time."}), 400
+
+    # Add contest to the database
     result = db.add_contest(
-        data["title"], data["description"], data["start_time"], data["end_time"], data["status"]
+        data["title"], data["description"], data["start_time"], data["end_time"], "Pending"
     )
     return jsonify(result)
+
 
 # Get Contests
 @app.route('/contests', methods=['GET'])
 def get_contests():
     contests = db.get_all_contests()
-    print(contests)
-    response = {"contests": [{"id": contest[0], "title": contest[1], "description": contest[2],"start_time":contest[3],"end_time":contest[4],"status":contest[5],"created_at":contest[6]} for contest in contests]}
-    return response
+    now = datetime.now()
+
+    # Update statuses dynamically
+    contests = [
+        {
+            "id": c[0],
+            "title": c[1],
+            "description": c[2],
+            "start_time": datetime.fromisoformat(c[3]).strftime('%Y-%m-%d %H:%M'),
+            "end_time": datetime.fromisoformat(c[4]).strftime('%Y-%m-%d %H:%M'),
+            "status": (
+                "Running" if datetime.fromisoformat(c[3]) <= now <= datetime.fromisoformat(c[4])
+                else "Completed" if now > datetime.fromisoformat(c[4])
+                else "Pending"
+            ),
+            "created_at": datetime.strptime(c[6], '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M')
+        }
+        for c in contests
+    ]
+
+    return jsonify({"contests": contests})
+
 
 # Get a contest by id
 @app.route('/contests/<int:contest_id>', methods=['GET'])

@@ -1,13 +1,14 @@
+// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Users from './components/Users';
 import Problems from './components/Problems';
-import Contests from './components/Contests';
 import Register from './components/Register';
 import Login from './components/Login';
 import ProblemDetails from './components/ProblemDetails';
 import VerifyPage from './components/VerifyPage';
-import Home from './components/Home'; // Import the Home component
+import Home from './components/Home'; 
+import Study from './components/Study'; // Import the Study component
 import './App.css';
 
 const App = () => {
@@ -21,9 +22,7 @@ const App = () => {
             <div className="left-links">
               <Link to="/">Home</Link> |  
               <Link to="/study">Code Academy</Link> |
-              <Link to="/problems">Problems</Link> 
-              
-              {/* <Link to="/contests">Contests</Link> */}
+              <Link to="/problems">Problems</Link>
             </div>
             <div className="right-links">
               <Link to="/register">Register</Link> |  
@@ -38,10 +37,10 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/users" element={<Users />} />
             <Route path="/problems" element={<Problems />} />
-            <Route path="/contests" element={<Contests />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/verify" element={<VerifyPage />} />
+            <Route path="/study" element={<Study />} /> {/* Add Study route */}
             <Route path="/problems/:id" element={<ProblemDetails />} />
           </Routes>
         </main>
@@ -67,7 +66,6 @@ const App = () => {
               <ul>
                 <li><Link to="/problems">Problems</Link></li>
                 <li><Link to="/study">Code Academy</Link></li>
-                {/* <li><Link to="/contests">Contests</Link></li> */}
                 <li><Link to="/register">Register</Link></li>
                 <li><Link to="/login">Login</Link></li>
               </ul>

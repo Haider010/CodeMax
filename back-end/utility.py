@@ -20,6 +20,7 @@ class Database:
         """
         )
 
+        # Create verification code table
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS verification_codes (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,

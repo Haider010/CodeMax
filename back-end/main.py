@@ -98,9 +98,6 @@ def submit_code(problem_id):
 def home():
     return "Home Page"
 
-# Configure email settings
-yag = yagmail.SMTP('bsai23057@itu.edu.pk', 'arfm duyc gyyw btml')
-
 def generate_verification_code():
     """Generate a 6-digit verification code"""
     return ''.join(random.choices(string.digits, k=6))

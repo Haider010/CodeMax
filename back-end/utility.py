@@ -86,7 +86,6 @@ class Database:
         
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS TestCases (
-                id INT AUTO_INCREMENT PRIMARY KEY,
                 problem_id INT NOT NULL,
                 input_data TEXT NOT NULL,
                 expected_output TEXT NOT NULL,
@@ -98,20 +97,20 @@ class Database:
         cursor.execute("""
             -- Test Cases for Easy Questions
             INSERT INTO TestCases (problem_id, input_data, expected_output) VALUES
-            (1, 'nums = [2, 7, 11, 15], target = 9', '[0, 1]'),
-            (2, 'x = 123', '321'),
-            (3, 'x = 121', 'True'),
+            (1, '2 7 11 15\n9', '[0, 1]'),
+            (2, '123', '321'),
+            (3, '121', 'True'),
 
             -- Test Cases for Medium Questions
-            (4, 's = "abcabcbb"', '3'),
-            (5, 'l1 = [2, 4, 3], l2 = [5, 6, 4]', '[7, 0, 8]'),
-            (6, 'nums = [-1, 0, 1, 2, -1, -4]', '[[-1, 0, 1], [-1, -1, 2]]'),
-            (7, 'height = [1,8,6,2,5,4,8,3,7]', '49'),
-            (8, 's = "babad"', '"bab" or "aba"'),
+            (4, 'abcabcbb', '3'),
+            (5, '2 4 3\n5 6 4', '[7, 0, 8]'),
+            (6, '-1 0 1 2 -1 -4', '[[-1, 0, 1], [-1, -1, 2]]'),
+            (7, '1 8 6 2 5 4 8 3 7', '49'),
+            (8, 'babad', '"bab" or "aba"'),
 
             -- Test Cases for Hard Questions
-            (9, 'nums1 = [1, 3], nums2 = [2]', '2'),
-            (10, 's = "aab", p = "c*a*b"', 'True');
+            (9, '1 3\n2', '2'),
+            (10, 'aab\nc*a*b', 'True');
         """)
 
         # Create contests table
@@ -159,6 +158,28 @@ class Database:
         )
         self.connection.commit()
         cursor.close()
+
+    def get_test_cases(self,problem_id):
+        # Establish a connection to your database
+        cursor = self.connection.cursor()
+        
+        # SQL query to fetch test cases for a specific problem_id
+        cursor.execute("""
+            SELECT input_data, expected_output FROM TestCases
+            WHERE problem_id = ?
+        """, (problem_id,))
+        
+        # Fetch all rows and store them in a list of tuples
+        test_cases = cursor.fetchall()
+
+        # Close the connection
+        cursor.close()
+
+        # Convert the result to a list of dictionaries for better readability (optional)
+        test_case_list = [{"input_data": case[0], "expected_output": case[1]} for case in test_cases]
+        
+        return test_case_list
+
 
     # Create user
     def create_user(self, name, email, password):

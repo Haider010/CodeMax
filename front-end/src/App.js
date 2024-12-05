@@ -6,6 +6,7 @@ import Contests from './components/Contests';
 import Register from './components/Register';
 import Login from './components/Login';
 import ProblemDetails from './components/ProblemDetails'; // Import ProblemDetails
+import './App.css'; // Make sure the CSS file is imported
 
 const App = () => {
   return (
@@ -14,7 +15,15 @@ const App = () => {
         <header>
           <h1>CodeMax</h1>
           <nav>
-            <Link to="/">Home</Link> | <Link to="/users">Users</Link> | <Link to="/problems">Problems</Link> | <Link to="/contests">Contests</Link> | <Link to="/register">Register</Link> | <Link to="/login">Login</Link>
+            <div className="left-links">
+              <Link to="/">Home</Link> |  
+              <Link to="/problems">Problems</Link> |  
+              <Link to="/contests">Contests</Link>
+            </div>
+            <div className="right-links">
+              <Link to="/register">Register</Link> |  
+              <Link to="/login">Login</Link>
+            </div>
           </nav>
         </header>
 
@@ -36,7 +45,7 @@ const App = () => {
             <Route path="/login" element={<Login />} />
 
             {/* ProblemDetails route for viewing problem details */}
-            <Route path="/problems/:id" element={<ProblemDetails />} /> {/* Add this line */}
+            <Route path="/problems/:id" element={<ProblemDetails />} />
           </Routes>
         </main>
       </div>

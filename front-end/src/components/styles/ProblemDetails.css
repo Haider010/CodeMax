@@ -1,130 +1,181 @@
-/* ProblemDetails.css */
-.problem-details-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-  }
+/* Problem Page Layout */
+.problem-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+}
+
+/* Problem Card */
+.problem-card {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.problem-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Problem Difficulty */
+.problem-difficulty {
+  font-size: 20px;
+  margin-bottom: 15px;
+  font-weight: bold;
   
-  .problem-details {
-    flex: 1;
-    max-width: 45%;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.problem-difficulty.easy {
+  color: #28a745; /* Green for easy */
+}
+
+.problem-difficulty.medium {
+  color: #ff9800; /* Orange for medium */
+}
+
+.problem-difficulty.hard {
+  color: #dc3545; /* Red for hard */
+}
+
+.problem-description {
+  font-size: 16px;
+  color: #555;
+}
+
+.problem-example pre {
+  background: #f4f4f4;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+/* Submission Section */
+.submission-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* Code Editor */
+.code-editor-container {
+  flex: 2; /* Take more space */
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.editor-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.language-select {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Submit Button */
+.submit-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.submit-btn:hover {
+  background: #0056b3;
+}
+
+/* Submission Results */
+.submission-results {
+  flex: 1; /* Take less space */
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.submission-results h3 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.test-case-result {
+  background: #f4f4f4;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}
+
+/* Spinner */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
-  
-  .problem-details h2 {
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 10px;
-  }
-  
-  .problem-details .difficulty {
-    font-size: 1rem;
-    font-weight: 500;
-    margin-bottom: 15px;
-    color:#555;
-  }
-  
-  .problem-details .difficulty span {
-    padding: 5px 10px;
-    border-radius: 5px;
-    color: #fff;
-  }
-  
-  .problem-details .difficulty .easy {
-    background-color: #4caf50;
-  }
-  
-  .problem-details .difficulty .medium {
-    background-color: #ff9800;
-  }
-  
-  .problem-details .difficulty .hard {
-    background-color: #f44336;
-  }
-  
-  .problem-details .description {
-    font-size: 1rem;
-    line-height: 1.5;
-    color: #555;
-  }
-  
-  .code-editor {
-    flex: 1;
-    max-width: 50%;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    background-color: #f9f9f9;
-  }
-  
-  .code-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-  }
-  
-  .code-header span {
-    font-size: 1.1rem;
-  }
-  
-  .language-select {
-    padding: 8px 12px;
-    font-size: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-  }
-  
-  .editor-container {
-    margin-bottom: 15px;
-  }
-  
-  .submit-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    font-size: 1rem;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  
-  .submit-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .submission-result {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #28a745;
-    margin-top: 15px;
-  }
-  .example-section {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-  }
-  
-  .example-section h3 {
-    font-size: 1.2em;
-    margin-bottom: 10px;
-  }
-  
-  .example {
-    background-color: #f1f1f1;
-    padding: 10px;
-    border-radius: 5px;
-    font-family: 'Courier New', Courier, monospace;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-  }
-  
-  
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}
+
+.status-accepted {
+  color: #28a745; /* Green for accepted */
+  margin-left: 10px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.status-rejected {
+  color: #dc3545; /* Red for rejected */
+  margin-left: 10px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}

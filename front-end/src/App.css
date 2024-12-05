@@ -1,0 +1,50 @@
+/* App.css or styles.css */
+
+header {
+    background-color: #082e56; /* Blue background color */
+    padding: 20px;
+    display: flex;
+    justify-content: space-between; /* Align left and right links */
+    align-items: center;
+  }
+  
+  header h1 {
+    color: white; /* Make the header text white */
+    margin: 0;
+    padding: 10px 20px; /* Padding around the text */
+    border: 2px solid white; /* White border around CodeMax */
+    border-radius: 5px; /* Rounded corners for the border */
+    font-size: 24px; /* Make the text size larger */
+    background-color: #0a4377; /* Slightly darker background for the h1 */
+  }
+  
+  nav {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  nav .left-links {
+    display: flex;
+  }
+  
+  nav .right-links {
+    display: flex;
+  }
+  
+  nav a {
+    color: white; /* White text color */
+    text-decoration: none;
+    margin: 0 15px;
+    font-size: 18px;
+  }
+  
+  nav a:hover {
+    text-decoration: underline;
+  }
+  
+  main {
+    padding: 20px;
+  }
+  
+  

@@ -19,12 +19,13 @@ def submit_code(problem_id):
     try:
         # Get code and language from frontend
         data = request.json
+        print("Data: ",data)
         code = data.get('code')
         language = data.get('language')
 
         # Map language names to Judge0 language IDs
         language_map = {
-            "Python": 71,
+            "python": 71,
             "JavaScript": 63,
             "Java": 62,
             "C++": 54,
@@ -34,7 +35,9 @@ def submit_code(problem_id):
         if not language_id:
             return jsonify({"error": f"Unsupported language: {language}"}), 400
 
-        test_cases = []
+        test_cases = db.get_test_cases(problem_id)
+    
+        print(test_cases)
 
         if not test_cases:
             return jsonify({"error": "No test cases found for this problem"}), 404
@@ -81,7 +84,8 @@ def submit_code(problem_id):
                 "execution_time": result_data.get("time"),
                 "memory": result_data.get("memory"),
             })
-
+            if results[-1]["status"] == "Accepted" and results[-1]["expected_output"] != results[-1]["actual_output"]:
+                results[-1]["status"] = "Rejected"
         return jsonify({"test_case_results": results})
     except Exception as e:
         return jsonify({"error": str(e)}), 500

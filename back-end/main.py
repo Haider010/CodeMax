@@ -8,6 +8,8 @@ import yagmail
 import random
 import string
 from email_validator import validate_email, EmailNotValidError
+from huggingface_hub import InferenceClient
+
 
 app = Flask(__name__)
 CORS(app)
@@ -90,9 +92,50 @@ def submit_code(problem_id):
             })
             if results[-1]["status"] == "Accepted" and results[-1]["expected_output"] != results[-1]["actual_output"]:
                 results[-1]["status"] = "Rejected"
+            db.add_submission(
+                problem_id, language, code, results[-1]["status"]
+            )
+
         return jsonify({"test_case_results": results})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+API_KEY = "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"  # Replace with your token
+
+# Initialize the InferenceClient
+client = InferenceClient(api_key=API_KEY)
+
+@app.route('/api/get-response', methods=['POST'])
+def get_response():
+    try:
+        # Extract user input and conversation history from the request
+        user_input = request.json.get('message', '')
+        conversation_history = request.json.get('conversation_history', [])
+
+        if not user_input:
+            return jsonify({"success": False, "error": "Message is required"}), 400
+
+        # Prepare the messages for the Hugging Face API
+        messages = [{"role": "user", "content": msg} for msg in conversation_history]
+        messages.append({"role": "user", "content": user_input})
+
+        # Call the Hugging Face API
+        completion = client.chat.completions.create(
+            model="microsoft/DialoGPT-medium",
+            messages=messages,
+            max_tokens=500
+        )
+
+        # Extract AI's reply
+        ai_reply = completion.choices[0].message["content"]
+        print(completion)
+
+        return jsonify({"success": True, "reply": ai_reply})
+    
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
 
 @app.route("/")
 def home():

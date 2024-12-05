@@ -145,13 +145,11 @@ class Database:
             CREATE TABLE IF NOT EXISTS submissions (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 problem_id INTEGER NOT NULL,
-                user_id INTEGER NOT NULL,
                 language TEXT NOT NULL,
                 code TEXT NOT NULL,
                 status TEXT NOT NULL,
                 submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (problem_id) REFERENCES problems (id),
-                FOREIGN KEY (user_id) REFERENCES users (id)
+                FOREIGN KEY (problem_id) REFERENCES problems (id)
             )
         """
         )
@@ -401,12 +399,12 @@ class Database:
         return {"message": "Contest deleted successfully!"}
 
     # add submission
-    def add_submission(self, problem_id, user_id, language, code, status):
+    def add_submission(self, problem_id,  language, code, status):
         cursor = self.connection.cursor()
         cursor.execute(
-            """INSERT INTO submissions (problem_id, user_id, language, code, status)
-               VALUES (?, ?, ?, ?, ?)""",
-            (problem_id, user_id, language, code, status),
+            """INSERT INTO submissions (problem_id, language, code, status)
+               VALUES (?, ?, ?, ?)""",
+            (problem_id, language, code, status),
         )
         self.connection.commit()
         return {"message": "Submission added successfully!"}

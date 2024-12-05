@@ -6,6 +6,7 @@ class Database:
         self.connection = sqlite3.connect(db_name, check_same_thread=False)
         cursor = self.connection.cursor()
 
+
         # Create users table
         cursor.execute(
             """
@@ -13,8 +14,18 @@ class Database:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
                 email TEXT UNIQUE NOT NULL,
-                password NOT NULL
+                password TEXT NOT NULL,
+                verified bool NOT NULL
             )
+        """
+        )
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS verification_codes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT NOT NULL,
+                verification_code TEXT NOT NULL
+                )
         """
         )
 
@@ -159,6 +170,67 @@ class Database:
         self.connection.commit()
         cursor.close()
 
+    def verify_user(self,email):
+        cursor = self.connection.cursor()
+        """
+        Verifies a user by updating their 'verified' field to True based on their email.
+        """
+        try:
+            # Update the 'verified' field to True for the user with the given email
+            cursor.execute(
+                """
+                UPDATE users
+                SET verified = 1
+                WHERE email = ?
+                """, (email,)
+            )
+            self.connection.commit()
+
+            # Check if any rows were updated (meaning the user exists)
+            if cursor.rowcount > 0:
+                print(f"User with email {email} has been verified.")
+            else:
+                print(f"No user found with the email {email}.")
+        except sqlite3.Error as e:
+            print(f"Error verifying user: {e}")
+        finally:
+            cursor.close()
+
+    def get_verification_code(self,email):
+        cursor = self.connection.cursor()
+        cursor.execute("""
+        SELECT verification_code FROM verification_codes WHERE email = ?""",(email,))
+        code = cursor.fetchone()[0]
+        return code
+    
+    def set_verification_code(self, email, code):
+        """Sets the verification code for the given email in the database."""
+        cursor = self.connection.cursor()
+        
+        # Check if the email already has a verification code
+        cursor.execute("""
+            SELECT * FROM verification_codes WHERE email = ?
+        """, (email,))
+        existing_code = cursor.fetchone()
+        
+        if existing_code:
+            # If the code already exists, update it
+            cursor.execute("""
+                UPDATE verification_codes
+                SET verification_code = ?
+                WHERE email = ?
+            """, (code, email))
+        else:
+            # If the email doesn't exist, insert the new verification code
+            cursor.execute("""
+                INSERT INTO verification_codes (email, verification_code)
+                VALUES (?, ?)
+            """, (email, code))
+        
+        # Commit the changes
+        self.connection.commit()
+
+
     def get_test_cases(self,problem_id):
         # Establish a connection to your database
         cursor = self.connection.cursor()
@@ -182,12 +254,12 @@ class Database:
 
 
     # Create user
-    def create_user(self, name, email, password):
+    def create_user(self, name, email, password, verified):
         try:
             cursor = self.connection.cursor()
             cursor.execute(
-                "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-                (name, email, password),
+                "INSERT INTO users (name, email, password, verified) VALUES (?, ?, ?, ?)",
+                (name, email, password, verified),
             )
             self.connection.commit()
             cursor.close()
@@ -202,10 +274,20 @@ class Database:
         return cursor.fetchone()
 
     # Read user
-    def read_users(self):
+    def verified_read_users(self):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM users")
-        return cursor.fetchall()
+        cursor.execute("SELECT email FROM users WHERE verified = ?",(True,))
+        users =  cursor.fetchall()
+        users = [user[0] for user in users]
+        return users
+    
+    # Read user
+    def all_read_users(self):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT email FROM users")
+        users =  cursor.fetchall()
+        users = [user[0] for user in users]
+        return users
 
     # Get user by id
     def get_user_by_id(self, user_id):

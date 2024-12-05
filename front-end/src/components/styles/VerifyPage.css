@@ -1,0 +1,142 @@
+.verify-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #082e56, #1e3d58); /* Gradient Background */
+    animation: backgroundAnimation 10s ease infinite; /* Background Animation */
+  }
+  
+  .verify-box {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    transform: perspective(1000px); /* 3D effect */
+    animation: popIn 0.6s ease-out;
+  }
+  
+  .verify-box h2 {
+    color: #082e56; /* Navbar blue color */
+    font-size: 28px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    animation: fadeIn 1s ease-out;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #0a4377; /* Dark blue border */
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin: 8px 0;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    transform: translateZ(0); /* 3D effect */
+  }
+  
+  .form-group input:focus {
+    border-color: #0a4377;
+    box-shadow: 0 0 12px rgba(10, 67, 119, 0.5); /* Focus effect */
+    transform: scale(1.05) translateZ(30px); /* 3D scaling effect */
+  }
+  
+  .verify-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #0a4377; /* Matching blue */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    transform: perspective(1000px); /* 3D effect */
+  }
+  
+  .verify-button:hover {
+    background-color: #082e56; /* Darken on hover */
+    transform: translateY(-4px) scale(1.05); /* 3D lifting effect */
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .message {
+    margin-top: 15px;
+    font-size: 16px;
+    animation: fadeIn 0.8s ease-out;
+  }
+  
+  .success {
+    color: #27ae60; /* Green for success */
+  }
+  
+  .error {
+    color: #e74c3c; /* Red for error */
+  }
+  
+  .timer {
+    margin-top: 15px;
+    font-size: 16px;
+    color: #888;
+    animation: fadeIn 0.8s ease-out;
+  }
+  
+  .login-link {
+    margin-top: 15px;
+    font-size: 16px;
+    animation: fadeIn 1.2s ease-out;
+  }
+  
+  .login-link a {
+    color: #0a4377; /* Matching blue */
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .login-link a:hover {
+    color: #1e3d58; /* Darker blue on hover */
+    text-decoration: underline;
+  }
+  
+  /* @keyframes backgroundAnimation {
+    0% {
+      background: linear-gradient(135deg, #082e56, #1e3d58);
+    }
+    50% {
+      background: linear-gradient(135deg, #1e3d58, #082e56);
+    }
+    100% {
+      background: linear-gradient(135deg, #082e56, #1e3d58);
+    }
+  } */
+  
+  @keyframes popIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  

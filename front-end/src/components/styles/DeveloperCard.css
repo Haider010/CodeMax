@@ -1,0 +1,40 @@
+.developer-card {
+  max-width: 300px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  text-align: center;
+  background: #fff;
+  margin: auto; /* Center the card on the screen */
+}
+
+.developer-photo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  object-fit: cover; /* Ensure the image fits the circle */
+}
+
+.developer-card h3 {
+  margin: 10px 0;
+}
+
+.developer-card ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap; /* Allow skills to wrap if they overflow */
+  justify-content: center;
+  gap: 8px; /* Add spacing between skills */
+}
+
+.developer-card ul li {
+  background: #051973;
+  color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 20px; /* Rounded corners for skills */
+  font-size: 14px;
+  display: inline-block; /* Ensure consistent sizing */
+}

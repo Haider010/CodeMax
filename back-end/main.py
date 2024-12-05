@@ -4,6 +4,10 @@ from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import requests
+import yagmail
+import random
+import string
+from email_validator import validate_email, EmailNotValidError
 
 app = Flask(__name__)
 CORS(app)
@@ -26,10 +30,10 @@ def submit_code(problem_id):
         # Map language names to Judge0 language IDs
         language_map = {
             "python": 71,
-            "JavaScript": 63,
-            "Java": 62,
-            "C++": 54,
-            "C#": 51
+            "javascript": 63,
+            "java": 62,
+            "cpp": 54,
+            "csharp": 51
         }
         language_id = language_map.get(language)
         if not language_id:
@@ -94,18 +98,68 @@ def submit_code(problem_id):
 def home():
     return "Home Page"
 
+# Configure email settings
+yag = yagmail.SMTP('bsai23057@itu.edu.pk', 'arfm duyc gyyw btml')
+
+def generate_verification_code():
+    """Generate a 6-digit verification code"""
+    return ''.join(random.choices(string.digits, k=6))
+
+def send_verification_email(email, code):
+    """Send the verification code to the user's email"""
+    yag = yagmail.SMTP('bsai23057@itu.edu.pk', 'arfm duyc gyyw btml')
+    yag.send(
+        to=email,
+        subject="CodeMax Registration - Email Verification",
+        contents=f"You're registering for CodeMax. Your verification code is: {code}"
+    )
+
 @app.route('/register', methods=['POST'])
 def register():
     data = request.json
     name = data['name']
     email = data['email']
     password = generate_password_hash(data['password'], method='sha256')
+    print(data)
+    # Validate email
+    try:
+        validate_email(email)
+    except EmailNotValidError as e:
+        return jsonify({"error": "Invalid email format"}), 400
 
-    result = db.create_user(name, email, password)
-    if result["status"] == "success":
-        return jsonify({"message": "User registered successfully!"}), 201
+    users = db.verified_read_users()
+
+    # Check if the email already exists
+    if email in users:
+        return jsonify({"error": "Email is already registered"}), 400
+
+    # Generate and send verification code
+    verification_code = generate_verification_code()
+    send_verification_email(email, verification_code)
+
+    # Store user data temporarily (pending verification)
+    db.create_user(name,email,password,False)
+
+    db.set_verification_code(email,verification_code)
+
+    return jsonify({"message": "Verification email sent. Please check your inbox."}), 200
+
+@app.route('/verify', methods=['POST'])
+def verify():
+    data = request.json
+    email = data['email']
+    code = data['code']
+    users = db.all_read_users()
+    print(users)
+    if email not in users:
+        return jsonify({"error": "Email not found"}), 404
+
+    # Check if the verification code matches
+    if db.get_verification_code(email) == code:
+        db.verify_user(email)
+        return jsonify({"message": "Email verified successfully!"}), 200
     else:
-        return jsonify({"error": result["message"]}), 400
+        return jsonify({"error": "Invalid verification code"}), 400
 
 
 # Login endpoint

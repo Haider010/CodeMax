@@ -394,10 +394,26 @@ def get_submissions():
     return jsonify({"submissions": submissions})
 
 # Get a submission by id
-@app.route('/submissions/<int:submission_id>', methods=['GET'])
-def get_submission_by_id(submission_id):
-    submission = db.get_submission_by_id(submission_id)
-    return jsonify({"submission": submission})
+@app.route('/submissions/<int:problem_id>', methods=['GET'])
+def get_submission_by_id(problem_id):
+    submissions = db.get_submission_by_id(problem_id)
+    print(submissions)
+    # Assuming your submission data is a list of tuples, you can map it to a dictionary
+    formatted_submissions = [
+        {
+            "id": submission[0],
+            "problem_id": submission[1],
+            "language": submission[2],
+            "code": submission[3],
+            "status": submission[4],
+            "submitted_at": submission[5]
+        }
+        for submission in submissions
+    ]
+
+    print(formatted_submissions)  # For debugging
+    return jsonify({"submissions": formatted_submissions})
+
 
 # Update Submission
 @app.route('/submissions/<int:submission_id>', methods=['PUT'])

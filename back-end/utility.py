@@ -416,11 +416,12 @@ class Database:
         return cursor.fetchall()
 
     # get submission by id
-    def get_submission_by_id(self, submission_id):
+    def get_submission_by_id(self, problem_id):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM submissions WHERE id = ?", (submission_id,))
-        submission = cursor.fetchone()
-        return submission if submission else {"message": "Submission not found"}
+        cursor.execute("SELECT * FROM submissions WHERE problem_id = ?", (problem_id,))
+        submissions = cursor.fetchall()
+        print(submissions)
+        return submissions if submissions else []
 
     # update submission
     def update_submission(

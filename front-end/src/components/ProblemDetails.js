@@ -9,11 +9,11 @@ const ProblemDetails = () => {
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState('python');
   const [submissionResult, setSubmissionResult] = useState([]);
-  const [submissions, setSubmissions] = useState([]);  // New state for submissions
+  const [submissions, setSubmissions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [showCodeModal, setShowCodeModal] = useState(false);  // To toggle the modal
-  const [modalCode, setModalCode] = useState('');  // To store the code to be displayed in modal
+  const [showCodeModal, setShowCodeModal] = useState(false);
+  const [modalCode, setModalCode] = useState('');
 
   // Fetch problem details by ID
   useEffect(() => {
@@ -30,26 +30,20 @@ const ProblemDetails = () => {
     // Fetch submissions by problem ID
     fetch(`http://localhost:5000/submissions/${id}`)
       .then((response) => response.json())
-      .then((data) => {
-        if (data.submissions && data.submissions.length > 0) {
-          setSubmissions(data.submissions);
-        } else {
-          setSubmissions([]);
-        }
-      })
+      .then((data) => setSubmissions(data.submissions || []))
       .catch((error) => console.error('Error fetching submissions:', error));
   }, [id]);
 
   const handleCodeSubmit = () => {
     const userLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
-    
+
     if (!userLoggedIn) {
       setSubmissionResult([{ error: 'Please log in to submit code.' }]);
       return;
     }
-  
+
     const payload = { code, language };
-  
+
     setIsLoading(true);
     fetch(`http://localhost:5000/submitCode/${id}`, {
       method: 'POST',
@@ -95,7 +89,7 @@ const ProblemDetails = () => {
       <div className="problem-card">
         <h2 className="problem-title">{problem.title}</h2>
         <p className={`problem-difficulty ${problem.difficulty.toLowerCase()}`}>{problem.difficulty}</p>
-        <p className="problem-description ">{problem.description}</p>
+        <p className="problem-description">{problem.description}</p>
         {problem.example_input_output && (
           <div className="problem-example">
             <h3>Example</h3>
@@ -147,7 +141,7 @@ const ProblemDetails = () => {
                     <p><strong>Expected Output:</strong> {result.expected_output}</p>
                     <p><strong>Your Output:</strong> {result.actual_output}</p>
                     <p className="status">
-                      <strong>Status:</strong> 
+                      <strong>Status:</strong>
                       {result.status === 'Accepted' ? (
                         <span className="status-accepted">
                           ✔️ {result.status}
@@ -166,29 +160,52 @@ const ProblemDetails = () => {
             ))
           )}
         </div>
-
-        {/* Submissions Section */}
-        <div className="submissions-list">
-          <h3>All Submissions</h3>
-          {submissions.length === 0 ? (
-            <p>No submissions yet.</p>
-          ) : (
-            submissions.map((submission, index) => (
-              <div key={index} className="submission-item">
-                <div className="submission-row">
-                  <p><strong>ID:</strong> {submission.id}</p>
-                  <p><strong>Language:</strong> {submission.language}</p>
-                  <p><strong>Status:</strong> {submission.status}</p>
-                  <p><strong>Submission Date:</strong> {submission.submitted_at}</p>
-                  <button className="view-code" onClick={() => openModal(submission.code)}>
-                    View Code
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
       </div>
+
+      {/* Submissions Table */}
+      <div className="submissions-list">
+  <h3>All Submissions</h3>
+  {submissions.length === 0 ? (
+    <p>No submissions yet.</p>
+  ) : (
+    <table className="submission-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Language</th>
+          <th>Status</th>
+          <th>Submission Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {submissions.map((submission, index) => (
+          <tr key={index}>
+            <td>{submission.id}</td>
+            <td>{submission.language}</td>
+            <td>
+              <span
+                className={`status ${
+                  submission.status === 'Accepted' ? 'status-accepted' : 'status-rejected'
+                }`}
+              >
+                {submission.status}
+              </span>
+            </td>
+            <td>{submission.submitted_at}</td>
+            <td>
+              <button className="view-code" onClick={() => openModal(submission.code)}>
+                View Code
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )}
+</div>
+
+
 
       {/* Modal for Code */}
       {showCodeModal && (

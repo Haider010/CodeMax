@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // For navigation to registration page
+import { Link, useNavigate } from 'react-router-dom'; // useNavigate for redirection
 import axios from 'axios';
 import './styles/Login.css'; // Import the CSS file for styling
 
-const Login = () => {
+const Login = ({ setIsLoggedIn }) => { // Receive setIsLoggedIn as a prop
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [message, setMessage] = useState('');
+  const navigate = useNavigate(); // Hook to navigate to the Home page
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -15,7 +16,16 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:5000/login', formData);
-      setMessage(response.data.message);
+
+      // Check if the status code is 200 before marking as logged in
+      if (response.status === 200 ) {
+        setMessage(response.data.message);
+        localStorage.setItem('userLoggedIn', 'true'); // Store logged-in state in localStorage
+        setIsLoggedIn(true); // Update logged-in state in App
+        navigate('/'); // Redirect to Home page
+      } else {
+        setMessage('Login failed. Please check your credentials.');
+      }
     } catch (error) {
       setMessage(error.response?.data?.error || 'An error occurred');
     }

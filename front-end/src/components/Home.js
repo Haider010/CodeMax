@@ -15,7 +15,7 @@ const Home = () => {
           name="Haider Karar"
           description="Hi! I’m Haider, a passionate Python developer and AI student at ITU Lahore. 
           I specialize in data visualization, machine learning, and building dynamic web applications."
-          skills={['Python', 'Flask', 'React', 'Streamlit', 'Machine Learning']}
+          skills={['Python','C++', 'Flask', 'React', 'Web Development', 'Machine Learning']}
           image="https://via.placeholder.com/150" // Replace with your photo URL if available
         />
       </section>

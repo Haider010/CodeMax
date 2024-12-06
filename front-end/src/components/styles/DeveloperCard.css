@@ -1,3 +1,6 @@
+/* Import a Google font if needed (optional) */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap'); /* Poppins is a soft, modern font */
+
 .developer-card {
   max-width: 300px;
   border: 1px solid #ddd;
@@ -19,6 +22,16 @@
 
 .developer-card h3 {
   margin: 10px 0;
+  color: orange !important; /* Use !important to ensure the style is applied */
+  font-family: 'Poppins', sans-serif; /* Apply the soft Poppins font */
+  font-weight: 400; /* Lighter weight for a soft appearance */
+}
+
+.developer-card h4 {
+  font-size: 18px;
+  color: #333; /* Text color for the "Backend Developer" label */
+  margin-top: 5px; /* Space between the name and the title */
+  font-weight: 600; /* Make the title bold */
 }
 
 .developer-card ul {

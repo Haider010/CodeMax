@@ -1,0 +1,72 @@
+.ai-assist {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .ai-assist h2 {
+    text-align: center;
+    color: #051973; /* ChatGPT primary color */
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .chat-box {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  .message {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+  }
+  
+  .message.user {
+    background-color: #051973; /* ChatGPT blue */
+    color: white;
+    align-self: flex-start;
+  }
+  
+  .message.ai {
+    background-color: #e2e2e2; /* Light gray for AI messages */
+    color: #333;
+    align-self: flex-end;
+  }
+  
+  .chat-input-form {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .chat-input-form input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  .chat-input-form button {
+    background-color: #051973; /* ChatGPT blue */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .chat-input-form button:hover {
+    background-color: #042b5c;
+  }
+  
+  .tab-item.active {
+    font-weight: bold;
+    color: #051973; /* Highlight active tab */
+  }
+  

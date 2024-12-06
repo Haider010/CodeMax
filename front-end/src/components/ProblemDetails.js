@@ -9,8 +9,11 @@ const ProblemDetails = () => {
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState('python');
   const [submissionResult, setSubmissionResult] = useState([]);
+  const [submissions, setSubmissions] = useState([]);  // New state for submissions
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showCodeModal, setShowCodeModal] = useState(false);  // To toggle the modal
+  const [modalCode, setModalCode] = useState('');  // To store the code to be displayed in modal
 
   // Fetch problem details by ID
   useEffect(() => {
@@ -23,11 +26,30 @@ const ProblemDetails = () => {
       })
       .then((data) => setProblem(data))
       .catch((error) => setError(error.message));
+
+    // Fetch submissions by problem ID
+    fetch(`http://localhost:5000/submissions/${id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.submissions && data.submissions.length > 0) {
+          setSubmissions(data.submissions);
+        } else {
+          setSubmissions([]);
+        }
+      })
+      .catch((error) => console.error('Error fetching submissions:', error));
   }, [id]);
 
   const handleCodeSubmit = () => {
+    const userLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+    
+    if (!userLoggedIn) {
+      setSubmissionResult([{ error: 'Please log in to submit code.' }]);
+      return;
+    }
+  
     const payload = { code, language };
-
+  
     setIsLoading(true);
     fetch(`http://localhost:5000/submitCode/${id}`, {
       method: 'POST',
@@ -48,6 +70,15 @@ const ProblemDetails = () => {
       })
       .catch(() => setSubmissionResult([{ error: 'Submission failed.' }]))
       .finally(() => setIsLoading(false));
+  };
+
+  const openModal = (code) => {
+    setModalCode(code);
+    setShowCodeModal(true);
+  };
+
+  const closeModal = () => {
+    setShowCodeModal(false);
   };
 
   if (error) {
@@ -135,7 +166,40 @@ const ProblemDetails = () => {
             ))
           )}
         </div>
+
+        {/* Submissions Section */}
+        <div className="submissions-list">
+          <h3>All Submissions</h3>
+          {submissions.length === 0 ? (
+            <p>No submissions yet.</p>
+          ) : (
+            submissions.map((submission, index) => (
+              <div key={index} className="submission-item">
+                <div className="submission-row">
+                  <p><strong>ID:</strong> {submission.id}</p>
+                  <p><strong>Language:</strong> {submission.language}</p>
+                  <p><strong>Status:</strong> {submission.status}</p>
+                  <p><strong>Submission Date:</strong> {submission.submitted_at}</p>
+                  <button className="view-code" onClick={() => openModal(submission.code)}>
+                    View Code
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
+
+      {/* Modal for Code */}
+      {showCodeModal && (
+        <div className="code-modal">
+          <div className="modal-content">
+            <span className="close" onClick={closeModal}>&times;</span>
+            <h4>Code</h4>
+            <pre>{modalCode}</pre>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

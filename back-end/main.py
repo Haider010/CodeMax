@@ -24,8 +24,8 @@ RAPIDAPI_KEY = "b66cb0edd6msh7b3858557c7a863p1a33d5jsn2ed6283ff643"
 def submit_code(problem_id):
     try:
         # Get code and language from frontend
+        print("Hang Submit Code")
         data = request.json
-        print("Data: ",data)
         code = data.get('code')
         language = data.get('language')
 
@@ -42,8 +42,6 @@ def submit_code(problem_id):
             return jsonify({"error": f"Unsupported language: {language}"}), 400
 
         test_cases = db.get_test_cases(problem_id)
-    
-        print(test_cases)
 
         if not test_cases:
             return jsonify({"error": "No test cases found for this problem"}), 404
@@ -159,8 +157,9 @@ def register():
     data = request.json
     name = data['name']
     email = data['email']
-    password = generate_password_hash(data['password'], method='sha256')
+    password = generate_password_hash(data['password'], method='pbkdf2:sha256')  # Changed to pbkdf2:sha256 for stronger hashing
     print(data)
+    
     # Validate email
     try:
         validate_email(email)
@@ -178,12 +177,11 @@ def register():
     send_verification_email(email, verification_code)
 
     # Store user data temporarily (pending verification)
-    db.create_user(name,email,password,False)
+    db.create_user(name, email, password, False)
 
-    db.set_verification_code(email,verification_code)
+    db.set_verification_code(email, verification_code)
 
     return jsonify({"message": "Verification email sent. Please check your inbox."}), 200
-
 @app.route('/verify', methods=['POST'])
 def verify():
     data = request.json
@@ -201,6 +199,44 @@ def verify():
     else:
         return jsonify({"error": "Invalid verification code"}), 400
 
+@app.route('/get_name', methods=['GET'])
+def get_name():
+    email = request.args.get('email')  # Get email from query parameters
+    if not email:
+        return jsonify({"error": "Email is required"}), 400
+
+    # Fetch name from the database based on the email
+    name = db.get_name(email)
+    
+    if name:
+        return jsonify({"name": name})
+    else:
+        return jsonify({"error": "User not found"}), 404
+
+@app.route('/finishContest', methods=['POST'])
+def finish_contest():
+    data = request.get_json()
+    contest_id = data.get('contestId')
+    total_time_taken = data.get('totalTimeTaken')
+    accepted_submissions = data.get('acceptedSubmissions')
+    user_name = data.get('userName')  # Get the user's name from the payload
+    db.save_contest_result(contest_id, user_name, total_time_taken,accepted_submissions)
+
+    return jsonify({"success": True})  # Return a success message or error based on your logic
+
+@app.route('/has_finished_contest', methods=['GET'])
+def has_finished_contest():
+    # Get contest_id and user_name from the query parameters
+    contest_id = request.args.get('contestId')
+    user_name = request.args.get('userName')
+
+    result = db.is_contest_finished(contest_id,user_name)
+    print(result)
+    if result:
+        return jsonify({"finished": True}), 200  # User has already finished the contest
+    else:
+        return jsonify({"finished": False}), 200  # User has not finished the contest
+
 
 # Login endpoint
 @app.route('/login', methods=['POST'])
@@ -210,6 +246,7 @@ def login():
     password = data['password']
 
     user = db.get_user_by_email(email)  # Add a new method in your Database class
+    print(user)
     if not user:
         return jsonify({"error": "User not found!"}), 404
 
@@ -360,6 +397,17 @@ def get_contests():
 @app.route('/contests/<int:contest_id>', methods=['GET'])
 def get_contest_by_id(contest_id):
     contest = db.get_contest_by_id(contest_id)
+    start_time = datetime.fromisoformat(contest[3])  # Convert string to datetime object
+    end_time = datetime.fromisoformat(contest[4])  # Similarly for end_time
+    contest = {
+        "ID": contest[0],
+        "Title": contest[1],
+        "Description": contest[2],
+        "Start-Time": start_time.isoformat(),  # Return in ISO format
+        "End-Time": end_time.isoformat(),    # Return in ISO format
+        "Status": contest[5],
+        "Created-at": contest[6]
+    }
     return jsonify({"contest": contest})
 
 # Update Contest
@@ -397,7 +445,6 @@ def get_submissions():
 @app.route('/submissions/<int:problem_id>', methods=['GET'])
 def get_submission_by_id(problem_id):
     submissions = db.get_submission_by_id(problem_id)
-    print(submissions)
     # Assuming your submission data is a list of tuples, you can map it to a dictionary
     formatted_submissions = [
         {
@@ -410,8 +457,6 @@ def get_submission_by_id(problem_id):
         }
         for submission in submissions
     ]
-
-    print(formatted_submissions)  # For debugging
     return jsonify({"submissions": formatted_submissions})
 
 
@@ -447,8 +492,24 @@ def get_contest_problems():
 # Get Contest Problem by id
 @app.route('/contest_problems/<int:contest_problem_id>', methods=['GET'])
 def get_contest_problem_by_id(contest_problem_id):
-    contest_problem = db.get_contest_problem_by_id(contest_problem_id)
-    return jsonify({"contest_problem": contest_problem})
+    contest_problems = db.get_contest_problem_by_id(contest_problem_id)
+    
+    # Check if the result is a single problem (tuple) or multiple problems (list of tuples)
+    if isinstance(contest_problems, tuple):
+        contest_problems = [contest_problems]  # Convert to a list if it's a single problem
+    
+    problems = [
+        {
+            "id": problem[0],
+            "title": problem[1],
+            "difficulty": problem[2],
+            "description": problem[3],
+            "example": problem[4]
+        }
+        for problem in contest_problems
+    ]
+    return jsonify({"contest_problems": problems})
+
 
 # Update Contest Problem
 @app.route('/contest_problems/<int:contest_problem_id>', methods=['PUT'])

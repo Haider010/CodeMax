@@ -1,0 +1,285 @@
+/* Solve Contest Page Layout */
+.solve-contest-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+  }
+  
+  /* Tabs Container */
+  .tabs-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1200px;
+  }
+  
+  /* Tabs */
+  .tabs {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .tab {
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #f0f0f0;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease;
+  }
+  
+  .tab:hover {
+    background: #e0e0e0;
+  }
+  
+  .tab.active {
+    background: #007bff;
+    color: #fff;
+    border-color: #0056b3;
+  }
+  
+  /* Problem Details Section */
+  .problem-details {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .problem-details h3 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .problem-details p {
+    font-size: 16px;
+    color: #555;
+    margin: 5px 0;
+  }
+  
+  .problem-details strong {
+    font-weight: bold;
+  }
+  
+  /* Code Editor Section */
+  .code-editor-container {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .editor-title {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .language-select {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Submit Button */
+  .submit-btn {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .submit-btn:hover {
+    background: #0056b3;
+  }
+  
+  /* Submission Results Section */
+  .submission-results {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .submission-results h3 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .test-case-result {
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .error {
+    color: red;
+    font-weight: bold;
+  }
+  
+  /* Loading Spinner */
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: auto;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Submissions List */
+  .submissions-list {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 30px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .submissions-list h3 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .submission-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .submission-table th,
+  .submission-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .submission-table th {
+    background: #f4f4f4;
+    font-weight: bold;
+  }
+  
+  .status {
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  .status-accepted {
+    color: #28a745; /* Green */
+  }
+  
+  .status-rejected {
+    color: #dc3545; /* Red */
+  }
+/* Difficulty Level Styles */
+.problem-details p strong {
+    margin-right: 5px;
+  }
+  
+  .problem-details p .difficulty {
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: capitalize;
+  }
+  
+  .problem-details p .difficulty.Easy {
+    color: #1b5e20; /* Dark green */
+    background-color: #e8f5e9; /* Light green background */
+  }
+  
+  .problem-details p .difficulty.Medium {
+    color: #ef6c00; /* Dark orange */
+    background-color: #fff3e0; /* Light orange background */
+  }
+  
+  .problem-details p .difficulty.Hard {
+    color: #b71c1c; /* Dark red */
+    background-color: #ffebee; /* Light red background */
+  }
+  .time-taken {
+    position: absolute;
+    top: 150px;
+    right: 25px;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+  }
+  .remaining-time {
+    position: absolute;
+    top: 115px;
+    right: 25px;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+  }
+  .top-section {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+  
+  .finish-button {
+    background-color: #a51cce;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 150px; /* Adjust width */
+  }
+  
+  .finish-button:hover {
+    background-color: #193fbe;
+  }
+  
+  .error-message {
+    color: red;
+    margin: 10px 0;
+    font-weight: bold;
+  }
+  
+  
+  

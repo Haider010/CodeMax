@@ -12,7 +12,7 @@ class Database:
             """
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
+                name TEXT UNIQUE NOT NULL,
                 email TEXT UNIQUE NOT NULL,
                 password TEXT NOT NULL,
                 verified bool NOT NULL
@@ -166,6 +166,16 @@ class Database:
             )
         """
         )
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS contest_positions(
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                contest_id INTEGER NOT NULL,
+                name TEXT UNIQUE NOT NULL UNIQUE,
+                time_taken TIMESTAMP NOT NULL,
+                total_submissions INTEGER NOT NULL
+                )
+        """)
         self.connection.commit()
         cursor.close()
 
@@ -229,6 +239,12 @@ class Database:
         # Commit the changes
         self.connection.commit()
 
+    def get_name(self,email):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT name FROM users WHERE email = ?",(email,))
+        name = cursor.fetchone()[0]
+        cursor.close()
+        return name
 
     def get_test_cases(self,problem_id):
         # Establish a connection to your database
@@ -251,7 +267,34 @@ class Database:
         
         return test_case_list
 
+    def is_contest_finished(self,contest_id,user_name):
+        cursor = self.connection.cursor()
+        cursor.execute("""
+            SELECT 1 FROM contest_positions
+            WHERE contest_id = ? AND name = ?
+        """, (contest_id, user_name))
 
+        result = cursor.fetchone()
+        if result:
+            return result[0]
+        else:
+            return None
+
+    def save_contest_result(self,contest_id,user_name,total_time_taken,accepted_submissions):
+        cursor = self.connection.cursor()
+        try:
+            # Insert the contest result into the 'contest_positions' table
+            cursor.execute("""
+                INSERT INTO contest_positions (contest_id, name, time_taken, total_submissions)
+                VALUES (?, ?, ?, ?)
+            """, (contest_id, user_name, total_time_taken, accepted_submissions))
+
+            # Commit the transaction
+            self.connection.commit()
+
+        except Exception as e:
+            print(f"Error saving contest result: {e}")
+            self.connection.rollback()
     # Create user
     def create_user(self, name, email, password, verified):
         try:
@@ -471,15 +514,14 @@ class Database:
     def get_contest_problem_by_id(self, contest_problem_id):
         cursor = self.connection.cursor()
         cursor.execute(
-            """SELECT cp.id, cp.contest_id, c.title as contest_title, 
-                      cp.problem_id, p.title as problem_title
-               FROM contest_problems cp
-               JOIN contests c ON cp.contest_id = c.id
-               JOIN problems p ON cp.problem_id = p.id
-               WHERE cp.id = ?""",
+            """SELECT p.*
+            FROM contest_problems cp
+            JOIN problems p ON cp.problem_id = p.id
+            WHERE cp.contest_id = ?""",
             (contest_problem_id,),
         )
-        result = cursor.fetchone()
+
+        result = cursor.fetchall()
         return result if result else {"message": "Contest problem not found"}
 
     # update contest problem

@@ -1,53 +1,76 @@
-/* App.css or styles.css */
-
+/* Header */
 header {
-    background-color: #082e56; /* Blue background color */
-    padding: 20px;
-    display: flex;
-    justify-content: space-between; /* Align left and right links */
-    align-items: center;
-  }
-  
-  header h1 {
-    color: white; /* Make the header text white */
-    margin: 0;
-    padding: 10px 20px; /* Padding around the text */
-    border: 2px solid white; /* White border around CodeMax */
-    border-radius: 5px; /* Rounded corners for the border */
-    font-size: 24px; /* Make the text size larger */
-    background-color: #0a4377; /* Slightly darker background for the h1 */
-  }
-  
-  nav {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-  }
-  
-  nav .left-links {
-    display: flex;
-  }
-  
-  nav .right-links {
-    display: flex;
-  }
-  
-  nav a {
-    color: white; /* White text color */
-    text-decoration: none;
-    margin: 0 15px;
-    font-size: 18px;
-  }
-  
-  nav a:hover {
-    text-decoration: underline;
-  }
-  
-  main {
-    padding: 20px;
-  }
-  
-  /* Developer Section */
+  background-color: #082e56; /* Blue background color */
+  padding: 20px;
+  display: flex;
+  justify-content: space-between; /* Align left and right links */
+  align-items: center; /* Align items vertically */
+}
+
+header h1 {
+  color: white; /* Make the header text white */
+  margin: 0;
+  padding: 10px 20px; /* Padding around the text */
+  border: 2px solid white; /* White border around CodeMax */
+  border-radius: 5px; /* Rounded corners for the border */
+  font-size: 24px; /* Make the text size larger */
+  background-color: #0a4377; /* Slightly darker background for the h1 */
+}
+
+/* Navigation */
+nav {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+nav .left-links {
+  display: flex;
+}
+
+nav .right-links {
+  display: flex;
+  align-items: center; /* Ensure vertical alignment */
+  gap: 15px; /* Add spacing between items */
+}
+
+nav a {
+  color: white; /* White text color */
+  text-decoration: none;
+  margin: 0 15px;
+  font-size: 18px;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* Button */
+button {
+  background-color: #007bff; /* Blue background */
+  color: white; /* White text */
+  padding: 10px 20px; /* Padding around the button */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 16px; /* Font size */
+  transition: background-color 0.3s; /* Smooth background color transition */
+}
+
+button:hover {
+  background-color: #0056b3; /* Darker blue when hovering */
+}
+
+button:focus {
+  outline: none; /* Remove focus outline */
+}
+
+/* Main content */
+main {
+  padding: 20px;
+}
+
+/* Developer Section */
 .developer-section {
   text-align: center;
   background-color: transparent;
@@ -148,25 +171,4 @@ header {
   margin-top: 30px;
   border-top: 1px solid #0073e6;
   padding-top: 10px;
-}
-/* App.css */
-
-/* Style for buttons (Login, Logout, etc.) */
-button {
-  background-color: #007bff; /* Blue background */
-  color: white; /* White text */
-  padding: 10px 20px; /* Padding around the button */
-  border: none; /* No border */
-  border-radius: 5px; /* Rounded corners */
-  cursor: pointer; /* Pointer cursor on hover */
-  font-size: 16px; /* Font size */
-  transition: background-color 0.3s; /* Smooth background color transition */
-}
-
-button:hover {
-  background-color: #0056b3; /* Darker blue when hovering */
-}
-
-button:focus {
-  outline: none; /* Remove focus outline */
 }
